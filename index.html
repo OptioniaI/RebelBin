@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Code Viewer</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/lua.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css"/>
   <style>
     * {
@@ -58,6 +60,11 @@
       background-color: #2a2a2a;
     }
 
+    .code-scroll {
+      display: flex;
+      min-width: max-content;
+    }
+
     .line-numbers {
       background-color: #1a1a1a;
       padding: 10px 8px;
@@ -72,9 +79,8 @@
       margin: 0;
       padding: 10px;
       white-space: pre;
-      min-width: 100%;
-      overflow: auto;
       font-size: 0.9em;
+      overflow: visible;
       color: white;
     }
 
@@ -109,8 +115,10 @@
     </div>
 
     <div class="code-wrapper">
-      <div class="line-numbers" id="lineNumbers"></div>
-      <pre><code id="codeContent" class=""></code></pre>
+      <div class="code-scroll">
+        <div class="line-numbers" id="lineNumbers"></div>
+        <pre><code id="codeContent" class=""></code></pre>
+      </div>
     </div>
   </div>
 
@@ -131,11 +139,10 @@
       const code = localStorage.getItem("code") || "// No text provided";
       const lang = new URLSearchParams(window.location.search).get("lang") || "text";
 
-      codeContent.textContent = code;
       codeContent.className = `hljs ${lang}`;
-      hljs.highlightElement(codeContent);
-
+      codeContent.textContent = code;
       updateLineNumbers(code);
+      hljs.highlightElement(codeContent);
     }
 
     function copyCode() {

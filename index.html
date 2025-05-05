@@ -13,32 +13,42 @@
       font-family: 'Consolas', 'Courier New', monospace;
       margin: 0;
       padding: 20px;
-      display: flex;
-      justify-content: center;
     }
     .code-container {
       display: flex;
       max-width: 90%;
-      overflow-x: auto;
+      margin: auto;
+      border: 1px solid #444;
+      overflow: auto;
+      background-color: #2a2a2a;
+    }
+    .line-numbers, pre {
+      margin: 0;
+      font-family: inherit;
+      font-size: 1em;
+      line-height: 1.5em;
+      white-space: pre;
     }
     .line-numbers {
       text-align: right;
       padding: 10px;
       padding-right: 15px;
+      color: #888;
       background-color: #2a2a2a;
+      border-right: 1px solid #444;
       user-select: none;
     }
     .line-numbers span {
       display: block;
+      height: 1.5em;
     }
-    pre {
-      margin: 0;
-    }
-    code {
-      background-color: #2a2a2a;
-      padding: 10px;
+    pre code {
       display: block;
-      overflow-x: auto;
+      padding: 10px;
+      font-family: inherit;
+      font-size: 1em;
+      line-height: 1.5em;
+      color: inherit;
     }
   </style>
 </head>
@@ -57,12 +67,14 @@
       const lines = data.code.split("\n");
       codeBlock.textContent = data.code;
       codeBlock.className = data.lang;
-      lines.forEach((_, i) => {
-        lineNumbers.innerHTML += `<span>${i + 1}</span>`;
-      });
+
+      // Generate accurate line numbers
+      lineNumbers.innerHTML = lines.map((_, i) => `<span>${i + 1}</span>`).join("");
+
       hljs.highlightElement(codeBlock);
     } else {
       codeBlock.textContent = "// No code provided.";
+      lineNumbers.innerHTML = `<span>1</span>`;
     }
   </script>
 </body>

@@ -74,6 +74,31 @@
       margin-top: 10px;
     }
 
+    .popup {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.4);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #4287f5;
+      backdrop-filter: blur(6px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .popup.show {
+      display: flex;
+    }
+
+    .popup button {
+      margin-top: 10px;
+      background: #4287f5;
+    }
+
     ::-webkit-scrollbar {
       background: #000;
     }
@@ -97,6 +122,11 @@
       <input type="checkbox" id="wrapToggle" onchange="toggleWrap()" />
       Word Wrap
     </label>
+  </div>
+
+  <div class="popup" id="popup">
+    <div id="popupMessage">Message</div>
+    <button onclick="dismissPopup()">Okay</button>
   </div>
 
   <script>
@@ -142,6 +172,7 @@
       temp.select();
       document.execCommand('copy');
       document.body.removeChild(temp);
+      showPopup("Code copied!");
     }
 
     function downloadCode() {
@@ -162,12 +193,28 @@
         .map(code => code.textContent)
         .join('\n');
       const blob = new Blob([text], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `code.${ext}`;
-      a.click();
-      URL.revokeObjectURL(url);
+
+      showPopup("Code downloading... 0%");
+
+      let percent = 0;
+      const interval = setInterval(() => {
+        percent += 10;
+        if (percent >= 100) {
+          clearInterval(interval);
+          document.getElementById('popupMessage').textContent = "Download complete!";
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `code.${ext}`;
+          a.click();
+          URL.revokeObjectURL(url);
+          setTimeout(() => {
+            dismissPopup();
+          }, 2000);
+        } else {
+          document.getElementById('popupMessage').textContent = `Code downloading... ${percent}%`;
+        }
+      }, 100);
     }
 
     function toggleWrap() {
@@ -176,6 +223,16 @@
       lineContents.forEach(el => {
         el.style.whiteSpace = checked ? 'pre-wrap' : 'pre';
       });
+    }
+
+    function showPopup(message) {
+      const popup = document.getElementById('popup');
+      document.getElementById('popupMessage').textContent = message;
+      popup.classList.add('show');
+    }
+
+    function dismissPopup() {
+      document.getElementById('popup').classList.remove('show');
     }
 
     codeWrapper.addEventListener('keydown', function (e) {

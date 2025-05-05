@@ -68,15 +68,20 @@
       font-size: 0.9em;
     }
 
-    .code-content {
+    pre {
+      margin: 0;
       padding: 10px;
       white-space: pre;
       min-width: 100%;
+      overflow: auto;
       font-size: 0.9em;
       color: white;
     }
 
-    /* Custom Scrollbar Styling */
+    code {
+      display: block;
+    }
+
     .code-wrapper::-webkit-scrollbar {
       width: 12px;
       height: 12px;
@@ -105,7 +110,7 @@
 
     <div class="code-wrapper">
       <div class="line-numbers" id="lineNumbers"></div>
-      <pre class="code-content" id="codeContent" contenteditable="false"></pre>
+      <pre><code id="codeContent" class=""></code></pre>
     </div>
   </div>
 
@@ -126,8 +131,8 @@
       const code = localStorage.getItem("code") || "// No text provided";
       const lang = new URLSearchParams(window.location.search).get("lang") || "text";
 
-      codeContent.innerText = code;
-      codeContent.className = `code-content hljs ${lang}`;
+      codeContent.textContent = code;
+      codeContent.className = `hljs ${lang}`;
       hljs.highlightElement(codeContent);
 
       updateLineNumbers(code);
@@ -143,7 +148,7 @@
     }
 
     function downloadCode() {
-      const code = codeContent.innerText;
+      const code = codeContent.textContent;
       const lang = new URLSearchParams(window.location.search).get("lang") || "txt";
 
       const extensions = {

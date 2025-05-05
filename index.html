@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Page</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        #displayText {
+            font-size: 2em;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="displayText">No text provided</div>
+
+    <script>
+        // Get the 'text' query parameter from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const text = urlParams.get('text');
+
+        // Display the text if it exists, otherwise show default message
+        if (text) {
+            document.getElementById('displayText').textContent = decodeURIComponent(text);
+        }
+    </script>
+</body>
+</html>

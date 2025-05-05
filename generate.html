@@ -3,78 +3,64 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Rebel's Generator</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css"/>
+  <title>Generate Code Link</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css" />
   <style>
     body {
-      background: #1a1a1a;
-      color: white;
-      font-family: Consolas, monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
+      background-color: #1a1a1a;
+      color: #fff;
+      font-family: 'Consolas', monospace;
+      padding: 20px;
     }
     textarea, select, button, input {
-      margin: 10px 0;
-      font-size: 1em;
       font-family: inherit;
+      font-size: 1em;
+      margin-bottom: 10px;
     }
     textarea {
+      width: 100%;
+      height: 200px;
       background: #2a2a2a;
       color: white;
-      border: 2px solid white;
+      border: 1px solid white;
       padding: 10px;
-      width: 90%;
-      height: 200px;
       resize: vertical;
     }
-    select, button {
-      padding: 10px 20px;
-      background: #00ff00;
-      color: #1a1a1a;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #00cc00;
-    }
-    input[type="text"] {
-      width: 90%;
-      padding: 10px;
+    #outputUrl {
+      width: 100%;
       background: #2a2a2a;
       color: white;
-      border: 2px solid white;
+      border: 1px solid white;
+      padding: 10px;
     }
   </style>
 </head>
 <body>
-  <h2>Generate Code Link</h2>
-  <select id="language">
+  <h2>Generate Code View Link</h2>
+
+  <select id="languageSelect">
     <option value="lua">Lua</option>
-    <option value="text">Text</option>
-    <option value="json">JSON</option>
     <option value="javascript">JavaScript</option>
     <option value="python">Python</option>
-    <option value="cpp">C++</option>
-    <option value="java">Java</option>
-    <option value="html">HTML</option>
-    <option value="css">CSS</option>
-    <option value="sql">SQL</option>
+    <option value="text">Text</option>
   </select>
-  <textarea id="code" placeholder="Enter your code here..."></textarea>
-  <button onclick="generateLink()">Generate Link</button>
-  <input type="text" id="outputLink" readonly onclick="this.select()" value="Link Here"/>
+
+  <textarea id="inputText" placeholder="Enter your code here..."></textarea>
+  <button onclick="generateUrl()">Generate URL</button>
+  <input type="text" id="outputUrl" readonly onclick="this.select()" />
 
   <script>
-    function generateLink() {
-      const code = document.getElementById('code').value;
-      const lang = document.getElementById('language').value;
-      localStorage.setItem('code', code);
-      localStorage.setItem('lang', lang);
-      document.getElementById('outputLink').value = window.location.origin + '/index.html';
+    function generateUrl() {
+      const code = document.getElementById("inputText").value;
+      const lang = document.getElementById("languageSelect").value;
+
+      // Save to localStorage
+      localStorage.setItem("rebel-code", code);
+
+      // Generate and show URL
+      const url = `index.html?lang=${encodeURIComponent(lang)}`;
+      document.getElementById("outputUrl").value = url;
     }
   </script>
 </body>

@@ -25,6 +25,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            width: 100%;
         }
         #displayText {
             font-size: 1.2em;
@@ -32,14 +33,14 @@
             border: 2px solid #ffffff;
             color: #ffffff;
             padding: 15px;
-            width: 95%;
-            max-width: 1000px;
+            width: 98vw;
             height: 500px;
             text-align: left;
             box-sizing: border-box;
             font-family: inherit;
             overflow: auto;
             border-radius: 10px;
+            max-width: none;
         }
         #displayText:focus {
             outline: none;
@@ -85,12 +86,10 @@
             });
         }
 
-        // Get query parameters from the URL
         const urlParams = new URLSearchParams(window.location.search);
         const text = urlParams.get('text');
         const lang = urlParams.get('lang') || 'text';
 
-        // Update the display with text and language if provided
         if (text) {
             const displayText = document.getElementById('displayText');
             displayText.innerHTML = `<pre><code class="${lang === 'text' ? '' : lang}">${decodeURIComponent(text)}</code></pre>`;

@@ -78,6 +78,8 @@
       overflow: auto;
       border-top-right-radius: 10px;
       border-bottom-right-radius: 10px;
+      margin: 0;
+      padding: 0;
     }
 
     pre code {
@@ -87,6 +89,7 @@
       font-size: 1em;
       line-height: 1.5em;
       color: inherit;
+      outline: none;
     }
   </style>
 </head>
@@ -98,7 +101,7 @@
     </div>
     <div class="code-container">
       <div class="line-numbers" id="lineNumbers"></div>
-      <pre><code id="codeBlock" class=""></code></pre>
+      <pre><code id="codeBlock" class="" tabindex="0"></code></pre>
     </div>
   </div>
 
@@ -152,6 +155,19 @@
       a.click();
       URL.revokeObjectURL(url);
     }
+
+    codeBlock.addEventListener('keydown', function (e) {
+      if (e.ctrlKey && e.key.toLowerCase() === 'a') {
+        e.preventDefault();
+
+        // Select all text inside the code block
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(codeBlock);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    });
   </script>
 </body>
 </html>

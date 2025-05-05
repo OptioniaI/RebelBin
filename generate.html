@@ -3,102 +3,79 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Generate URL for Code Display</title>
+  <title>Rebel's Generator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css"/>
   <style>
     body {
-      background-color: #1a1a1a;
-      color: #ffffff;
-      font-family: 'Consolas', 'Courier New', monospace;
+      background: #1a1a1a;
+      color: white;
+      font-family: Consolas, monospace;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       height: 100vh;
       margin: 0;
-      overflow: hidden;
     }
-    .container {
-      text-align: center;
-      width: 80%;
-      max-width: 600px;
-    }
-    #inputText {
-      font-size: 1.2em;
-      background-color: #2a2a2a;
-      border: 2px solid #ffffff;
-      color: #ffffff;
-      padding: 10px;
-      width: 100%;
-      height: 200px;
-      text-align: left;
-      box-sizing: border-box;
+    textarea, select, button, input {
+      margin: 10px 0;
+      font-size: 1em;
       font-family: inherit;
-      margin-bottom: 20px;
-      resize: none;
     }
-    #preview {
-      font-size: 1.2em;
-      background-color: #2a2a2a;
-      border: 2px solid #ffffff;
-      color: #ffffff;
+    textarea {
+      background: #2a2a2a;
+      color: white;
+      border: 2px solid white;
       padding: 10px;
-      width: 100%;
+      width: 90%;
       height: 200px;
-      text-align: left;
-      box-sizing: border-box;
-      margin-bottom: 20px;
-      overflow: auto;
+      resize: vertical;
     }
-    #inputText:focus, #outputUrl:focus {
-      outline: none;
-      border-color: #00ff00;
-    }
-    #outputUrl {
-      font-size: 1.5em;
-      background-color: #2a2a2a;
-      border: 2px solid #ffffff;
-      color: #ffffff;
-      padding: 10px;
-      width: 100%;
-      text-align: center;
-      box-sizing: border-box;
-      font-family: inherit;
-      margin-bottom: 20px;
-      cursor: pointer;
-    }
-    select, button, input[type="checkbox"] {
-      font-size: 1.2em;
-      background-color: #00ff00;
+    select, button {
+      padding: 10px 20px;
+      background: #00ff00;
       color: #1a1a1a;
       border: none;
-      padding: 10px;
       cursor: pointer;
-      font-family: inherit;
-      margin-bottom: 20px;
     }
-    button:hover, select:hover {
-      background-color: #00cc00;
+    button:hover {
+      background: #00cc00;
     }
-    label {
-      font-size: 1.2em;
-      margin-left: 10px;
+    input[type="text"] {
+      width: 90%;
+      padding: 10px;
+      background: #2a2a2a;
+      color: white;
+      border: 2px solid white;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Generate URL for Code Display</h2>
-    <select id="languageSelect" onchange="updateHighlight()">
-      <option value="lua">Lua (.lua)</option>
-      <option value="text">Text (.txt)</option>
-      <option value="json">JSON (.json)</option>
-      <option value="javascript">JavaScript (.js)</option>
-      <option value="python">Python (.py)</option>
-      <option value="cpp">C++ (.cpp)</option>
-      <option value="java">Java (.java)</option>
-      <option value="html">HTML (.html)</option>
-      <option value="css">CSS (.css)</option>
-      <option value="sql">SQL (.sql)</option>
-    </select>
-    <textarea id="inputText" placeholder="Enter your code"></textarea>
-    <div id="preview"></div>
+  <h2>Generate Code Link</h2>
+  <select id="language">
+    <option value="lua">Lua</option>
+    <option value="text">Text</option>
+    <option value="json">JSON</option>
+    <option value="javascript">JavaScript</option>
+    <option value="python">Python</option>
+    <option value="cpp">C++</option>
+    <option value="java">Java</option>
+    <option value="html">HTML</option>
+    <option value="css">CSS</option>
+    <option value="sql">SQL</option>
+  </select>
+  <textarea id="code" placeholder="Enter your code here..."></textarea>
+  <button onclick="generateLink()">Generate Link</button>
+  <input type="text" id="outputLink" readonly onclick="this.select()" value="Link Here"/>
+
+  <script>
+    function generateLink() {
+      const code = document.getElementById('code').value;
+      const lang = document.getElementById('language').value;
+      localStorage.setItem('code', code);
+      localStorage.setItem('lang', lang);
+      document.getElementById('outputLink').value = window.location.origin + '/index.html';
+    }
+  </script>
+</body>
+</html>

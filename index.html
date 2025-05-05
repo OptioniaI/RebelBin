@@ -43,30 +43,25 @@
 
     .code-container {
       display: flex;
-      overflow: auto;
+      width: 50%;
+      height: 50vh;
       border-radius: 10px;
       border: 1px solid #444;
       background-color: #2a2a2a;
-    }
-
-    .line-numbers, pre {
-      margin: 0;
-      font-family: inherit;
-      font-size: 1em;
-      line-height: 1.5em;
-      white-space: pre;
+      overflow: hidden;
     }
 
     .line-numbers {
       text-align: right;
-      padding: 10px;
-      padding-right: 15px;
+      padding: 10px 5px 10px 10px;
       color: #888;
       background-color: #2a2a2a;
       border-right: 1px solid #444;
       user-select: none;
-      border-top-left-radius: 10px;
-      border-bottom-left-radius: 10px;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      height: 100%;
+      font-size: 0.9em;
     }
 
     .line-numbers span {
@@ -75,21 +70,22 @@
     }
 
     pre {
-      overflow: auto;
-      border-top-right-radius: 10px;
-      border-bottom-right-radius: 10px;
       margin: 0;
-      padding: 0;
+      overflow: scroll;
+      height: 100%;
+      width: 100%;
+      background-color: transparent;
     }
 
     pre code {
       display: block;
       padding: 10px;
       font-family: inherit;
-      font-size: 1em;
+      font-size: 0.9em;
       line-height: 1.5em;
       color: inherit;
       outline: none;
+      white-space: pre;
     }
   </style>
 </head>
@@ -145,7 +141,6 @@
 
     function downloadCode() {
       if (!data || !data.code || !data.lang) return;
-
       const extension = extensionMap[data.lang] || 'txt';
       const blob = new Blob([data.code], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
@@ -159,8 +154,6 @@
     codeBlock.addEventListener('keydown', function (e) {
       if (e.ctrlKey && e.key.toLowerCase() === 'a') {
         e.preventDefault();
-
-        // Select all text inside the code block
         const selection = window.getSelection();
         const range = document.createRange();
         range.selectNodeContents(codeBlock);

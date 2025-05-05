@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate URL for Dark Page</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Consolas', 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            width: 80%;
+            max-width: 600px;
+        }
+        #inputText, #outputUrl {
+            font-size: 1.5em;
+            background-color: #2a2a2a;
+            border: 2px solid #ffffff;
+            color: #ffffff;
+            padding: 10px;
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+            font-family: inherit;
+            margin-bottom: 20px;
+        }
+        #inputText:focus, #outputUrl:focus {
+            outline: none;
+            border-color: #00ff00;
+        }
+        #outputUrl {
+            cursor: pointer;
+        }
+        button {
+            font-size: 1.2em;
+            background-color: #00ff00;
+            color: #1a1a1a;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        button:hover {
+            background-color: #00cc00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Generate URL for Text Display</h2>
+        <input type="text" id="inputText" placeholder="Enter your code or text">
+        <button onclick="generateUrl()">Generate URL</button>
+        <input type="text" id="outputUrl" value="Your URL will appear here" readonly onclick="this.select()">
+    </div>
+
+    <script>
+        function generateUrl() {
+            const inputText = document.getElementById('inputText').value;
+            const baseUrl = 'https://rebel-bin.vercel.app/';
+            const encodedText = encodeURIComponent(inputText);
+            const generatedUrl = `${baseUrl}?text=${encodedText}`;
+            const outputUrl = document.getElementById('outputUrl');
+            outputUrl.value = generatedUrl;
+        }
+    </script>
+</body>
+</html>

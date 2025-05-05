@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Code Viewer</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css"/>
   <style>
     body {
       background-color: #1a1a1a;
@@ -13,57 +13,57 @@
       font-family: 'Consolas', 'Courier New', monospace;
       margin: 0;
       padding: 20px;
+      display: flex;
+      justify-content: center;
     }
-
     .code-container {
       display: flex;
-      background-color: #2a2a2a;
-      border: 2px solid #ffffff;
-      overflow: auto;
-      height: 90vh;
+      max-width: 90%;
+      overflow-x: auto;
     }
-
     .line-numbers {
       text-align: right;
-      padding: 20px 10px;
-      color: #888;
+      padding: 10px;
+      padding-right: 15px;
+      background-color: #2a2a2a;
       user-select: none;
-      white-space: pre;
-      line-height: 1.5em;
     }
-
+    .line-numbers span {
+      display: block;
+    }
     pre {
       margin: 0;
-      padding: 20px;
-      overflow: auto;
-      font-size: 1em;
     }
-
     code {
+      background-color: #2a2a2a;
+      padding: 10px;
       display: block;
-      white-space: pre;
-    }
-
-    .hljs {
-      background: transparent;
-      color: #ffffff;
+      overflow-x: auto;
     }
   </style>
 </head>
 <body>
   <div class="code-container">
     <div class="line-numbers" id="lineNumbers"></div>
-    <pre><code id="codeDisplay" class=""></code></pre>
+    <pre><code id="codeBlock" class=""></code></pre>
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const code = localStorage.getItem("rebel-code") || "";
-      const lang = new URLSearchParams(window.location.search).get("lang") || "text";
+    const data = JSON.parse(localStorage.getItem("codeData"));
+    const codeBlock = document.getElementById("codeBlock");
+    const lineNumbers = document.getElementById("lineNumbers");
 
-      const codeDisplay = document.getElementById("codeDisplay");
-      const lineNumbers = document.getElementById("lineNumbers");
-
-      if (!code.trim()) {
-        codeDisplay.textContent = "// No code provided.";
-        lineNumbers.textContent = "1";
+    if (data && data.code) {
+      const lines = data.code.split("\n");
+      codeBlock.textContent = data.code;
+      codeBlock.className = data.lang;
+      lines.forEach((_, i) => {
+        lineNumbers.innerHTML += `<span>${i + 1}</span>`;
+      });
+      hljs.highlightElement(codeBlock);
+    } else {
+      codeBlock.textContent = "// No code provided.";
+    }
+  </script>
+</body>
+</html>

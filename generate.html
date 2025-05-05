@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Generate URL for Code Display</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/lua.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css" />
   <style>
     body {
       background-color: #1a1a1a;
@@ -19,85 +17,51 @@
       align-items: center;
       height: 100vh;
       margin: 0;
-      overflow: hidden;
     }
     .container {
       text-align: center;
       width: 80%;
       max-width: 600px;
     }
-    #inputText {
+    textarea, select, button, input[type="text"] {
       font-size: 1.2em;
+      margin-bottom: 15px;
+    }
+    textarea {
       background-color: #2a2a2a;
-      border: 2px solid #ffffff;
       color: #ffffff;
-      padding: 10px;
+      border: 2px solid #ffffff;
       width: 100%;
       height: 200px;
-      text-align: left;
+      resize: none;
+      padding: 10px;
       box-sizing: border-box;
       font-family: inherit;
-      margin-bottom: 20px;
-      resize: none;
-    }
-    #preview {
-      font-size: 1.2em;
-      background-color: #2a2a2a;
-      border: 2px solid #ffffff;
-      color: #ffffff;
-      padding: 10px;
-      width: 100%;
-      height: 200px;
-      text-align: left;
-      box-sizing: border-box;
-      margin-bottom: 20px;
-      overflow: auto;
-    }
-    #inputText:focus, #outputUrl:focus {
-      outline: none;
-      border-color: #00ff00;
     }
     #outputUrl {
-      font-size: 1.5em;
       background-color: #2a2a2a;
       border: 2px solid #ffffff;
       color: #ffffff;
       padding: 10px;
       width: 100%;
       text-align: center;
-      box-sizing: border-box;
-      font-family: inherit;
-      margin-bottom: 20px;
-      cursor: pointer;
     }
-    select, button, input[type="checkbox"] {
-      font-size: 1.2em;
+    button, select {
       background-color: #00ff00;
       color: #1a1a1a;
       border: none;
       padding: 10px;
       cursor: pointer;
-      font-family: inherit;
-      margin-bottom: 20px;
     }
     button:hover, select:hover {
       background-color: #00cc00;
-    }
-    label {
-      font-size: 1.2em;
-      margin-left: 10px;
-    }
-    .hljs {
-      background: #2a2a2a;
-      color: #ffffff;
-      padding: 0;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h2>Generate URL for Code Display</h2>
-    <select id="languageSelect" onchange="updateHighlight()">
+    <select id="languageSelect">
       <option value="lua">Lua (.lua)</option>
       <option value="text">Text (.txt)</option>
       <option value="json">JSON (.json)</option>
@@ -109,78 +73,19 @@
       <option value="css">CSS (.css)</option>
       <option value="sql">SQL (.sql)</option>
     </select>
-    <textarea id="inputText" placeholder="Enter your code"></textarea>
-    <div id="preview"></div>
-    <button onclick="generateUrl()">Generate URL</button>
-    <input type="text" id="outputUrl" value="Your URL will appear here" readonly onclick="this.select()">
-    <div>
-      <input type="checkbox" id="downloadToggle" onchange="toggleDownload()">
-      <label for="downloadToggle">Enable Download</label>
-    </div>
-    <button id="downloadButton" style="display: none;" onclick="downloadCode()">Download Code</button>
+    <textarea id="inputText" placeholder="Enter your code here..."></textarea>
+    <button onclick="generateUrl()">Generate Link</button>
+    <input type="text" id="outputUrl" readonly onclick="this.select()" value="Your URL will appear here">
   </div>
 
   <script>
-    hljs.highlightAll();
-
-    function updateHighlight() {
-      const inputText = document.getElementById('inputText').value;
-      const language = document.getElementById('languageSelect').value;
-      const preview = document.getElementById('preview');
-      preview.innerHTML = `<pre><code class="${language === 'text' ? '' : language}">${inputText || '// Enter code above'}</code></pre>`;
-      hljs.highlightAll();
-    }
-
     function generateUrl() {
-      const language = document.getElementById('languageSelect').value;
-      const code = document.getElementById('inputText').value.trim();
-      if (!code) {
-        alert("Please enter some code before generating the URL.");
-        return;
-      }
-
-      // Save code to localStorage
-      localStorage.setItem('rebel-code', code);
-
-      const baseUrl = 'index.html';
-      const generatedUrl = `${baseUrl}?lang=${encodeURIComponent(language)}`;
-      document.getElementById('outputUrl').value = generatedUrl;
-
-      // Optionally auto-redirect:
-      // window.location.href = generatedUrl;
+      const code = document.getElementById("inputText").value;
+      const lang = document.getElementById("languageSelect").value;
+      localStorage.setItem("codeData", JSON.stringify({ code, lang }));
+      const url = "index.html";
+      document.getElementById("outputUrl").value = window.location.origin + "/" + url;
     }
-
-    function toggleDownload() {
-      const downloadButton = document.getElementById('downloadButton');
-      downloadButton.style.display = document.getElementById('downloadToggle').checked ? 'block' : 'none';
-    }
-
-    function downloadCode() {
-      const inputText = document.getElementById('inputText').value;
-      const language = document.getElementById('languageSelect').value;
-      const extension = {
-        lua: 'lua',
-        text: 'txt',
-        json: 'json',
-        javascript: 'js',
-        python: 'py',
-        cpp: 'cpp',
-        java: 'java',
-        html: 'html',
-        css: 'css',
-        sql: 'sql'
-      }[language];
-      const blob = new Blob([inputText], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `code.${extension}`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    document.getElementById('inputText').addEventListener('input', updateHighlight);
-    updateHighlight();
   </script>
 </body>
 </html>

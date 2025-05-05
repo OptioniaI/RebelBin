@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Rebel's PasteBin</title>
+  <title>Code Viewer</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/lua.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
@@ -16,16 +16,34 @@
       margin: 0;
       padding: 20px;
     }
-    #displayText {
+
+    .code-container {
+      display: flex;
       background: #2a2a2a;
-      padding: 20px;
-      border-radius: 10px;
       border: 2px solid white;
-      overflow: auto;
+      border-radius: 10px;
       max-width: 1000px;
       margin: auto;
-      white-space: pre-wrap;
+      overflow-x: auto;
     }
+
+    .line-numbers {
+      text-align: right;
+      padding: 20px 10px;
+      color: #888;
+      user-select: none;
+    }
+
+    .code-content {
+      padding: 20px;
+      overflow: auto;
+      white-space: pre;
+    }
+
+    pre {
+      margin: 0;
+    }
+
     button {
       margin: 20px auto;
       display: block;
@@ -36,28 +54,41 @@
       border-radius: 10px;
       cursor: pointer;
     }
+
     button:hover {
       background-color: #00cc00;
     }
   </style>
 </head>
 <body>
-  <pre id="displayText"><code>No code found</code></pre>
+  <div class="code-container">
+    <div class="line-numbers" id="lineNumbers"></div>
+    <pre class="code-content"><code id="displayText"></code></pre>
+  </div>
   <button onclick="copyCode()">Copy Code</button>
 
   <script>
     const code = localStorage.getItem('code') || '';
     const lang = localStorage.getItem('lang') || 'text';
     const display = document.getElementById('displayText');
+    const lineNumbers = document.getElementById('lineNumbers');
 
     if (code) {
-      display.innerHTML = `<code class="${lang}">${code}</code>`;
-      hljs.highlightAll();
+      // Set the code content
+      display.className = lang;
+      display.textContent = code;
+
+      // Generate line numbers
+      const lines = code.split('\n');
+      lineNumbers.innerHTML = lines.map((_, i) => (i + 1)).join('\n');
+
+      hljs.highlightElement(display);
     }
 
     function copyCode() {
-      const text = document.querySelector('#displayText code').textContent;
-      navigator.clipboard.writeText(text).then(() => alert('Code copied!'));
+      navigator.clipboard.writeText(display.textContent).then(() => {
+        alert('Code copied!');
+      });
     }
   </script>
 </body>

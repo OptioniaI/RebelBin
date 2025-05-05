@@ -20,7 +20,13 @@
       margin: auto;
     }
 
-    .copy-button {
+    .button-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .copy-button, .download-button {
       background-color: #4287f5;
       border: none;
       color: white;
@@ -28,11 +34,10 @@
       font-size: 1em;
       border-radius: 8px;
       cursor: pointer;
-      margin-bottom: 10px;
       transition: background-color 0.2s ease-in-out;
     }
 
-    .copy-button:hover {
+    .copy-button:hover, .download-button:hover {
       background-color: #336bd1;
     }
 
@@ -87,7 +92,10 @@
 </head>
 <body>
   <div class="wrapper">
-    <button class="copy-button" onclick="copyCode()">Copy Code</button>
+    <div class="button-bar">
+      <button class="copy-button" onclick="copyCode()">Copy Code</button>
+      <button class="download-button" onclick="downloadCode()">Download Code</button>
+    </div>
     <div class="code-container">
       <div class="line-numbers" id="lineNumbers"></div>
       <pre><code id="codeBlock" class=""></code></pre>
@@ -98,6 +106,19 @@
     const data = JSON.parse(localStorage.getItem("codeData"));
     const codeBlock = document.getElementById("codeBlock");
     const lineNumbers = document.getElementById("lineNumbers");
+
+    const extensionMap = {
+      lua: "lua",
+      text: "txt",
+      json: "json",
+      javascript: "js",
+      python: "py",
+      cpp: "cpp",
+      java: "java",
+      html: "html",
+      css: "css",
+      sql: "sql"
+    };
 
     if (data && data.code) {
       const lines = data.code.split("\n");
@@ -117,6 +138,19 @@
         button.textContent = 'Copied!';
         setTimeout(() => button.textContent = originalText, 1500);
       });
+    }
+
+    function downloadCode() {
+      if (!data || !data.code || !data.lang) return;
+
+      const extension = extensionMap[data.lang] || 'txt';
+      const blob = new Blob([data.code], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `code.${extension}`;
+      a.click();
+      URL.revokeObjectURL(url);
     }
   </script>
 </body>

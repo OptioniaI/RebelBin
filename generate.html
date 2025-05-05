@@ -16,10 +16,12 @@
       height: 100vh;
       margin: 0;
     }
+
     textarea, select, button {
       margin: 10px;
       border-radius: 8px;
     }
+
     textarea {
       width: 600px;
       height: 300px;
@@ -28,6 +30,7 @@
       border: 1px solid white;
       padding: 10px;
     }
+
     select, button {
       padding: 10px;
       background-color: #4287f5;
@@ -35,16 +38,44 @@
       border: none;
       cursor: pointer;
     }
+
     #linkContainer {
       margin-top: 10px;
     }
+
     #linkContainer a {
       color: #5f6cfa;
       text-decoration: none;
       font-size: 16px;
     }
+
     #linkContainer a:hover {
       text-decoration: underline;
+    }
+
+    .popup {
+      position: fixed;
+      top: 20px;
+      background-color: rgba(66, 135, 245, 0.4);
+      color: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      backdrop-filter: blur(8px);
+      z-index: 999;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    .popup button {
+      margin-top: 10px;
+      background-color: #4287f5;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -67,6 +98,11 @@
 
   <div id="linkContainer"></div>
 
+  <div class="popup" id="popup">
+    <div>Link generated below.</div>
+    <button onclick="dismissPopup()">Okay</button>
+  </div>
+
   <script>
     function generate() {
       const code = document.getElementById('inputText').value;
@@ -77,6 +113,13 @@
       const url = window.location.origin + "/index.html";
       document.getElementById('linkContainer').innerHTML =
         `<a href="${url}" target="_blank">${url}</a>`;
+
+      // Show popup
+      document.getElementById('popup').style.display = 'flex';
+    }
+
+    function dismissPopup() {
+      document.getElementById('popup').style.display = 'none';
     }
   </script>
 </body>

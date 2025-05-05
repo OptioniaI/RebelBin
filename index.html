@@ -58,20 +58,12 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const code = localStorage.getItem("rebel-code") || "// No code found";
+      const code = localStorage.getItem("rebel-code") || "";
       const lang = new URLSearchParams(window.location.search).get("lang") || "text";
 
       const codeDisplay = document.getElementById("codeDisplay");
       const lineNumbers = document.getElementById("lineNumbers");
 
-      codeDisplay.className = lang;
-      codeDisplay.textContent = code;
-
-      const lines = code.split("\n");
-      lineNumbers.textContent = lines.map((_, i) => i + 1).join("\n");
-
-      hljs.highlightElement(codeDisplay);
-    });
-  </script>
-</body>
-</html>
+      if (!code.trim()) {
+        codeDisplay.textContent = "// No code provided.";
+        lineNumbers.textContent = "1";

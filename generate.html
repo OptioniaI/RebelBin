@@ -3,88 +3,72 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Generate URL for Code Display</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css" />
+  <title>Code Generator</title>
   <style>
     body {
       background-color: #1a1a1a;
-      color: #ffffff;
-      font-family: 'Consolas', 'Courier New', monospace;
+      color: white;
+      font-family: monospace;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       height: 100vh;
       margin: 0;
     }
-    .container {
-      text-align: center;
-      width: 80%;
-      max-width: 600px;
-    }
-    textarea, select, button, input[type="text"] {
-      font-size: 1.2em;
-      margin-bottom: 15px;
+    textarea, select, button, input {
+      margin: 10px;
+      border-radius: 8px;
     }
     textarea {
-      background-color: #2a2a2a;
-      color: #ffffff;
-      border: 2px solid #ffffff;
-      width: 100%;
-      height: 200px;
-      resize: none;
+      width: 600px;
+      height: 300px;
+      background: #2a2a2a;
+      color: white;
+      border: 1px solid white;
       padding: 10px;
-      box-sizing: border-box;
-      font-family: inherit;
     }
-    #outputUrl {
-      background-color: #2a2a2a;
-      border: 2px solid #ffffff;
-      color: #ffffff;
+    select, button {
       padding: 10px;
-      width: 100%;
-      text-align: center;
-    }
-    button, select {
-      background-color: #00ff00;
-      color: #1a1a1a;
+      background-color: #4287f5;
+      color: white;
       border: none;
-      padding: 10px;
       cursor: pointer;
     }
-    button:hover, select:hover {
-      background-color: #00cc00;
+    input {
+      width: 600px;
+      padding: 10px;
+      background: #2a2a2a;
+      color: white;
+      border: 1px solid white;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Generate URL for Code Display</h2>
-    <select id="languageSelect">
-      <option value="lua">Lua (.lua)</option>
-      <option value="text">Text (.txt)</option>
-      <option value="json">JSON (.json)</option>
-      <option value="javascript">JavaScript (.js)</option>
-      <option value="python">Python (.py)</option>
-      <option value="cpp">C++ (.cpp)</option>
-      <option value="java">Java (.java)</option>
-      <option value="html">HTML (.html)</option>
-      <option value="css">CSS (.css)</option>
-      <option value="sql">SQL (.sql)</option>
-    </select>
-    <textarea id="inputText" placeholder="Enter your code here..."></textarea>
-    <button onclick="generateUrl()">Generate Link</button>
-    <input type="text" id="outputUrl" readonly onclick="this.select()" value="Your URL will appear here">
-  </div>
+  <h2>Generate Link</h2>
+  <select id="languageSelect">
+    <option value="lua">Lua (.lua)</option>
+    <option value="text">Text (.txt)</option>
+    <option value="json">JSON (.json)</option>
+    <option value="javascript">JavaScript (.js)</option>
+    <option value="python">Python (.py)</option>
+    <option value="cpp">C++ (.cpp)</option>
+    <option value="java">Java (.java)</option>
+    <option value="html">HTML (.html)</option>
+    <option value="css">CSS (.css)</option>
+    <option value="sql">SQL (.sql)</option>
+  </select>
+  <textarea id="inputText" placeholder="Enter your code..."></textarea>
+  <button onclick="generate()">Generate Link</button>
+  <input type="text" id="outputUrl" readonly onclick="this.select()" />
 
   <script>
-    function generateUrl() {
-      const code = document.getElementById("inputText").value;
-      const lang = document.getElementById("languageSelect").value;
-      localStorage.setItem("codeData", JSON.stringify({ code, lang }));
-      const url = "index.html";
-      document.getElementById("outputUrl").value = window.location.origin + "/" + url;
+    function generate() {
+      const code = document.getElementById('inputText').value;
+      const lang = document.getElementById('languageSelect').value;
+      localStorage.setItem('code', code);
+      localStorage.setItem('lang', lang);
+      document.getElementById('outputUrl').value = window.location.origin + "/index.html";
     }
   </script>
 </body>

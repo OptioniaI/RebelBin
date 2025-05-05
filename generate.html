@@ -132,10 +132,9 @@
         }
 
         function generateUrl() {
-            const inputText = document.getElementById('inputText').value;
+            const language = document.getElementById('languageSelect').value;
             const baseUrl = 'https://rebel-bin.vercel.app/';
-            const encodedText = encodeURIComponent(inputText);
-            const generatedUrl = `${baseUrl}?text=${encodedText}`;
+            const generatedUrl = `${baseUrl}?lang=${language}`;
             document.getElementById('outputUrl').value = generatedUrl;
         }
 

@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Generate Code Link</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css" />
   <style>
     body {
       background-color: #1a1a1a;
@@ -13,13 +11,13 @@
       font-family: 'Consolas', monospace;
       padding: 20px;
     }
-    textarea, select, button, input {
+    textarea, select, button {
       font-family: inherit;
       font-size: 1em;
       margin-bottom: 10px;
+      width: 100%;
     }
     textarea {
-      width: 100%;
       height: 200px;
       background: #2a2a2a;
       color: white;
@@ -27,17 +25,10 @@
       padding: 10px;
       resize: vertical;
     }
-    #outputUrl {
-      width: 100%;
-      background: #2a2a2a;
-      color: white;
-      border: 1px solid white;
-      padding: 10px;
-    }
   </style>
 </head>
 <body>
-  <h2>Generate Code View Link</h2>
+  <h2>Generate Code View</h2>
 
   <select id="languageSelect">
     <option value="lua">Lua</option>
@@ -47,20 +38,23 @@
   </select>
 
   <textarea id="inputText" placeholder="Enter your code here..."></textarea>
-  <button onclick="generateUrl()">Generate URL</button>
-  <input type="text" id="outputUrl" readonly onclick="this.select()" />
+  <button onclick="generateAndRedirect()">View Code</button>
 
   <script>
-    function generateUrl() {
-      const code = document.getElementById("inputText").value;
+    function generateAndRedirect() {
+      const code = document.getElementById("inputText").value.trim();
       const lang = document.getElementById("languageSelect").value;
+
+      if (!code) {
+        alert("Please enter some code first.");
+        return;
+      }
 
       // Save to localStorage
       localStorage.setItem("rebel-code", code);
 
-      // Generate and show URL
-      const url = `index.html?lang=${encodeURIComponent(lang)}`;
-      document.getElementById("outputUrl").value = url;
+      // Redirect to index.html
+      window.location.href = `index.html?lang=${encodeURIComponent(lang)}`;
     }
   </script>
 </body>

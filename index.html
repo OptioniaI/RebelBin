@@ -1,30 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Code Viewer</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/lua.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css" />
   <style>
     body {
       background-color: #1a1a1a;
       color: #ffffff;
-      font-family: Consolas, monospace;
+      font-family: 'Consolas', 'Courier New', monospace;
       margin: 0;
       padding: 20px;
     }
 
     .code-container {
       display: flex;
-      background: #2a2a2a;
-      border: 2px solid white;
-      border-radius: 10px;
-      max-width: 1000px;
-      margin: auto;
-      overflow-x: auto;
+      background-color: #2a2a2a;
+      border: 2px solid #ffffff;
+      overflow: auto;
+      height: 90vh;
     }
 
     .line-numbers {
@@ -32,64 +28,50 @@
       padding: 20px 10px;
       color: #888;
       user-select: none;
-    }
-
-    .code-content {
-      padding: 20px;
-      overflow: auto;
       white-space: pre;
+      line-height: 1.5em;
     }
 
     pre {
       margin: 0;
+      padding: 20px;
+      overflow: auto;
+      font-size: 1em;
     }
 
-    button {
-      margin: 20px auto;
+    code {
       display: block;
-      background-color: #00ff00;
-      color: #1a1a1a;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
+      white-space: pre;
     }
 
-    button:hover {
-      background-color: #00cc00;
+    .hljs {
+      background: transparent;
+      color: #ffffff;
     }
   </style>
 </head>
 <body>
   <div class="code-container">
     <div class="line-numbers" id="lineNumbers"></div>
-    <pre class="code-content"><code id="displayText"></code></pre>
+    <pre><code id="codeDisplay" class=""></code></pre>
   </div>
-  <button onclick="copyCode()">Copy Code</button>
 
   <script>
-    const code = localStorage.getItem('code') || '';
-    const lang = localStorage.getItem('lang') || 'text';
-    const display = document.getElementById('displayText');
-    const lineNumbers = document.getElementById('lineNumbers');
+    document.addEventListener("DOMContentLoaded", () => {
+      const code = localStorage.getItem("rebel-code") || "// No code found";
+      const lang = new URLSearchParams(window.location.search).get("lang") || "text";
 
-    if (code) {
-      // Set the code content
-      display.className = lang;
-      display.textContent = code;
+      const codeDisplay = document.getElementById("codeDisplay");
+      const lineNumbers = document.getElementById("lineNumbers");
 
-      // Generate line numbers
-      const lines = code.split('\n');
-      lineNumbers.innerHTML = lines.map((_, i) => (i + 1)).join('\n');
+      codeDisplay.className = lang;
+      codeDisplay.textContent = code;
 
-      hljs.highlightElement(display);
-    }
+      const lines = code.split("\n");
+      lineNumbers.textContent = lines.map((_, i) => i + 1).join("\n");
 
-    function copyCode() {
-      navigator.clipboard.writeText(display.textContent).then(() => {
-        alert('Code copied!');
-      });
-    }
+      hljs.highlightElement(codeDisplay);
+    });
   </script>
 </body>
 </html>

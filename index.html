@@ -1,100 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dark Page with Code Display</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/lua.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css">
-    <style>
-        body {
-            background-color: #1a1a1a;
-            color: #ffffff;
-            font-family: 'Consolas', 'Courier New', monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-        }
-        .container {
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
-        #displayText {
-            font-size: 1.2em;
-            background-color: #2a2a2a;
-            border: 2px solid #ffffff;
-            color: #ffffff;
-            padding: 15px;
-            width: 98vw;
-            height: 500px;
-            text-align: left;
-            box-sizing: border-box;
-            font-family: inherit;
-            overflow: auto;
-            border-radius: 10px;
-            max-width: none;
-        }
-        #displayText:focus {
-            outline: none;
-            border-color: #00ff00;
-        }
-        #copyButton {
-            font-size: 1.2em;
-            background-color: #00ff00;
-            color: #1a1a1a;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            font-family: inherit;
-            margin-top: 10px;
-            border-radius: 20px;
-        }
-        #copyButton:hover {
-            background-color: #00cc00;
-        }
-        .hljs {
-            background: #2a2a2a;
-            color: #ffffff;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dark Page with Code Display</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/lua.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css">
+  <style>
+    body {
+      background-color: #1a1a1a;
+      color: #ffffff;
+      font-family: 'Consolas', 'Courier New', monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+    .container {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 95%;
+    }
+    #displayText {
+      font-size: 1.2em;
+      background-color: #2a2a2a;
+      border: 2px solid #ffffff;
+      color: #ffffff;
+      padding: 15px;
+      width: 100%;
+      max-width: 1000px;
+      height: 500px;
+      text-align: left;
+      box-sizing: border-box;
+      font-family: inherit;
+      overflow: auto;
+      border-radius: 10px;
+    }
+    #displayText:focus {
+      outline: none;
+      border-color: #00ff00;
+    }
+    #copyButton {
+      font-size: 1.2em;
+      background-color: #00ff00;
+      color: #1a1a1a;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 10px;
+      border-radius: 20px;
+    }
+    #copyButton:hover {
+      background-color: #00cc00;
+    }
+    .hljs {
+      background: #2a2a2a;
+      color: #ffffff;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div id="displayText"><pre><code>No text provided</code></pre></div>
-        <button id="copyButton" onclick="copyCode()">Copy Code</button>
-    </div>
+  <div class="container">
+    <div id="displayText"><pre><code>No text provided</code></pre></div>
+    <button id="copyButton" onclick="copyCode()">Copy Code</button>
+  </div>
 
-    <script>
-        hljs.highlightAll();
+  <script>
+    hljs.highlightAll();
 
-        function copyCode() {
-            const codeElement = document.getElementById('displayText').querySelector('code');
-            const text = codeElement.textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Code copied to clipboard!');
-            });
-        }
+    function copyCode() {
+      const codeElement = document.getElementById('displayText').querySelector('code');
+      const text = codeElement.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Code copied to clipboard!');
+      });
+    }
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const text = urlParams.get('text');
-        const lang = urlParams.get('lang') || 'text';
+    // Read POSTed data using FormData if available
+    window.addEventListener('DOMContentLoaded', async () => {
+      if (window.location.search || window.location.hash) return;
 
+      try {
+        const form = await (async () => {
+          const formData = new FormData();
+          return formData;
+        })();
+
+        const params = new URLSearchParams(window.location.search);
+        const lang = params.get('lang') || 'text';
+
+        // Modern browsers use `performance.navigation.type === 1` for reload, skip it
+        if (window.performance?.navigation?.type === 1) return;
+
+        const response = await fetch(window.location.href, {
+          method: 'POST'
+        });
+
+        const text = await response.text();
         if (text) {
-            const displayText = document.getElementById('displayText');
-            displayText.innerHTML = `<pre><code class="${lang === 'text' ? '' : lang}">${decodeURIComponent(text)}</code></pre>`;
-            hljs.highlightElement(displayText.querySelector('code'));
+          const displayText = document.getElementById('displayText');
+          displayText.innerHTML = `<pre><code class="${lang === 'text' ? '' : lang}">${text}</code></pre>`;
+          hljs.highlightElement(displayText.querySelector('code'));
         }
-    </script>
+      } catch (e) {
+        console.error('Failed to load POSTed data.', e);
+      }
+    });
+  </script>
 </body>
 </html>

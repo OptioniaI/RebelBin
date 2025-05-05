@@ -19,7 +19,6 @@
     }
 
     .code-wrapper {
-      display: flex;
       max-width: 90vw;
       max-height: 70vh;
       width: 600px;
@@ -27,25 +26,32 @@
       border-radius: 12px;
       background: #2a2a2a;
       overflow: auto;
+      display: flex;
+      flex-direction: column;
+      scroll-behavior: smooth;
     }
 
-    .line-numbers {
-      padding: 10px 5px;
-      background: #1a1a1a;
+    .code-line {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      line-height: 1.5em;
+    }
+
+    .line-number {
+      width: 40px;
       text-align: right;
-      user-select: none;
+      padding-right: 10px;
       color: #888;
+      user-select: none;
+      flex-shrink: 0;
     }
 
-    .line-numbers div,
-    .code-lines div {
-      height: 1.5em;
-    }
-
-    .code-lines {
-      padding: 10px;
+    .line-content {
+      flex-grow: 1;
       white-space: pre;
-      overflow: auto;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
 
     .buttons {
@@ -78,10 +84,7 @@
 </head>
 <body>
   <h2>Code Viewer</h2>
-  <div class="code-wrapper">
-    <div class="line-numbers" id="lineNumbers"></div>
-    <pre class="code-lines" id="codeContainer"></pre>
-  </div>
+  <div class="code-wrapper" id="codeWrapper"></div>
 
   <div class="buttons">
     <button onclick="copyCode()">Copy Code</button>
@@ -98,31 +101,37 @@
   <script>
     const code = localStorage.getItem('code') || '';
     const lang = localStorage.getItem('lang') || 'text';
-    const codeContainer = document.getElementById('codeContainer');
-    const lineNumbers = document.getElementById('lineNumbers');
+    const codeWrapper = document.getElementById('codeWrapper');
 
     function renderCodeWithLines(code, lang) {
       const lines = code.split('\n');
-      lineNumbers.innerHTML = '';
-      codeContainer.innerHTML = '';
+      codeWrapper.innerHTML = '';
 
-      lines.forEach((line, i) => {
+      lines.forEach((line, index) => {
+        const lineRow = document.createElement('div');
+        lineRow.className = 'code-line';
+
         const lineNumber = document.createElement('div');
-        lineNumber.textContent = i + 1;
-        lineNumbers.appendChild(lineNumber);
+        lineNumber.className = 'line-number';
+        lineNumber.textContent = index + 1;
 
-        const codeLine = document.createElement('div');
+        const lineContent = document.createElement('div');
+        lineContent.className = 'line-content';
+
         const codeElement = document.createElement('code');
         codeElement.className = lang;
         codeElement.textContent = line || ' ';
         hljs.highlightElement(codeElement);
-        codeLine.appendChild(codeElement);
-        codeContainer.appendChild(codeLine);
+
+        lineContent.appendChild(codeElement);
+        lineRow.appendChild(lineNumber);
+        lineRow.appendChild(lineContent);
+        codeWrapper.appendChild(lineRow);
       });
     }
 
     function copyCode() {
-      const text = Array.from(codeContainer.querySelectorAll('code'))
+      const text = Array.from(document.querySelectorAll('.line-content code'))
         .map(code => code.textContent)
         .join('\n');
       const temp = document.createElement('textarea');
@@ -147,7 +156,7 @@
         sql: 'sql'
       };
       const ext = extensions[lang] || 'txt';
-      const text = Array.from(codeContainer.querySelectorAll('code'))
+      const text = Array.from(document.querySelectorAll('.line-content code'))
         .map(code => code.textContent)
         .join('\n');
       const blob = new Blob([text], { type: 'text/plain' });
@@ -160,7 +169,11 @@
     }
 
     function toggleWrap() {
-      codeContainer.style.whiteSpace = document.getElementById('wrapToggle').checked ? 'pre-wrap' : 'pre';
+      const checked = document.getElementById('wrapToggle').checked;
+      const lineContents = document.querySelectorAll('.line-content');
+      lineContents.forEach(el => {
+        el.style.whiteSpace = checked ? 'pre-wrap' : 'pre';
+      });
     }
 
     renderCodeWithLines(code, lang);

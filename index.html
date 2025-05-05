@@ -2,152 +2,124 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Code Viewer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/lua.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css"/>
   <style>
     body {
       margin: 0;
-      background-color: #1a1a1a;
+      background: #1a1a1a;
       color: white;
-      font-family: 'Consolas', 'Courier New', monospace;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    .container {
+      font-family: monospace;
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 90%;
-      max-width: 800px;
+      padding: 20px;
     }
 
-    .button-bar {
-      margin-bottom: 10px;
+    .code-container {
+      display: flex;
+      background: #2a2a2a;
+      border-radius: 12px;
+      border: 1px solid white;
+      overflow: auto;
+      max-width: 90vw;
+      max-height: 70vh;
+      width: 600px;
+    }
+
+    .line-numbers {
+      text-align: right;
+      padding: 10px 5px;
+      color: #888;
+      user-select: none;
+      background: #1a1a1a;
+    }
+
+    .code-content {
+      padding: 10px;
+      overflow: auto;
+      white-space: pre;
+    }
+
+    .buttons {
+      margin-top: 10px;
       display: flex;
       gap: 10px;
     }
 
     button {
-      background-color: #4287f5;
+      background: #4287f5;
       color: white;
+      padding: 10px 20px;
       border: none;
-      padding: 10px 16px;
-      font-size: 1em;
       border-radius: 8px;
       cursor: pointer;
     }
 
-    button:hover {
-      background-color: #336bd1;
+    .wrap-toggle {
+      margin-top: 10px;
     }
 
-    .code-container {
-      display: flex;
-      background-color: #2a2a2a;
-      border-radius: 12px;
-      overflow: auto;
-      border: 2px solid #fff;
-      width: 100%;
-      height: 60vh;
-      font-size: 0.85em;
-    }
-
-    .line-numbers {
-      padding: 10px;
-      background-color: #1a1a1a;
-      color: #888;
-      text-align: right;
-      user-select: none;
-      white-space: pre;
-      line-height: 1.4;
-    }
-
-    pre {
-      margin: 0;
-      padding: 10px;
-      overflow: visible;
-      white-space: pre;
-      line-height: 1.4;
-      background-color: #2a2a2a;
-    }
-
-    code.hljs {
-      display: block;
-      overflow-x: auto;
-      padding: 0;
-      white-space: pre;
-    }
-
-    .code-container::-webkit-scrollbar {
-      width: 12px;
-      height: 12px;
-    }
-
-    .code-container::-webkit-scrollbar-track {
+    ::-webkit-scrollbar {
       background: #000;
     }
-
-    .code-container::-webkit-scrollbar-thumb {
-      background-color: #555;
+    ::-webkit-scrollbar-thumb {
+      background: #888;
       border-radius: 6px;
-    }
-
-    .code-container::-webkit-scrollbar-thumb:hover {
-      background-color: #777;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="button-bar">
-      <button onclick="copyCode()">Copy Code</button>
-      <button onclick="downloadCode()">Download</button>
-    </div>
-    <div class="code-container">
-      <div class="line-numbers" id="lineNumbers"></div>
-      <pre><code id="codeContent" class="hljs"></code></pre>
-    </div>
+  <h2>Code Viewer</h2>
+  <div class="code-container" id="codeWrapper">
+    <div class="line-numbers" id="lineNumbers"></div>
+    <pre class="code-content"><code id="codeBlock" contenteditable="true"></code></pre>
+  </div>
+  <div class="buttons">
+    <button onclick="copyCode()">Copy Code</button>
+    <button onclick="downloadCode()">Download Code</button>
+  </div>
+  <div class="wrap-toggle">
+    <label>
+      <input type="checkbox" id="wrapToggle" onchange="toggleWrap()" />
+      Word Wrap
+    </label>
   </div>
 
   <script>
-    const codeContent = document.getElementById("codeContent");
-    const lineNumbers = document.getElementById("lineNumbers");
+    const code = localStorage.getItem('code') || '';
+    const lang = localStorage.getItem('lang') || 'text';
+    const codeBlock = document.getElementById('codeBlock');
+    const lineNumbers = document.getElementById('lineNumbers');
 
-    function updateLineNumbers(text) {
-      const lines = text.split("\n").length;
-      lineNumbers.textContent = Array.from({ length: lines }, (_, i) => i + 1).join("\n");
+    function updateLineNumbers() {
+      const lines = codeBlock.textContent.split('\n').length;
+      lineNumbers.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('\n');
     }
 
     function loadCode() {
-      const code = localStorage.getItem("code") || "// No code provided";
-      const lang = new URLSearchParams(window.location.search).get("lang") || "text";
-
-      codeContent.className = `hljs ${lang}`;
-      codeContent.textContent = code;
-      updateLineNumbers(code);
-      hljs.highlightElement(codeContent);
+      if (!code) {
+        codeBlock.textContent = '// No code found';
+      } else {
+        codeBlock.className = lang;
+        codeBlock.textContent = code;
+        hljs.highlightElement(codeBlock);
+      }
+      updateLineNumbers();
     }
 
     function copyCode() {
-      const selection = window.getSelection();
-      const range = document.createRange();
-      range.selectNodeContents(codeContent);
-      selection.removeAllRanges();
-      selection.addRange(range);
-      document.execCommand("copy");
+      const temp = document.createElement('textarea');
+      temp.value = codeBlock.textContent;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      document.body.removeChild(temp);
     }
 
     function downloadCode() {
-      const code = codeContent.textContent;
-      const lang = new URLSearchParams(window.location.search).get("lang") || "text";
       const extensions = {
         lua: 'lua',
         text: 'txt',
@@ -161,14 +133,24 @@
         sql: 'sql'
       };
       const ext = extensions[lang] || 'txt';
-
-      const blob = new Blob([code], { type: 'text/plain' });
+      const blob = new Blob([codeBlock.textContent], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
+      a.href = url;
       a.download = `code.${ext}`;
       a.click();
-      URL.revokeObjectURL(a.href);
+      URL.revokeObjectURL(url);
     }
+
+    function toggleWrap() {
+      const wrap = document.getElementById('wrapToggle').checked;
+      codeBlock.parentElement.style.whiteSpace = wrap ? 'pre-wrap' : 'pre';
+    }
+
+    codeBlock.addEventListener('input', updateLineNumbers);
+    codeBlock.addEventListener('click', () => {
+      codeBlock.focus();
+    });
 
     loadCode();
   </script>

@@ -18,29 +18,34 @@
       padding: 20px;
     }
 
-    .code-container {
+    .code-wrapper {
       display: flex;
-      background: #2a2a2a;
-      border-radius: 12px;
-      border: 1px solid white;
-      overflow: auto;
       max-width: 90vw;
       max-height: 70vh;
       width: 600px;
+      border: 1px solid white;
+      border-radius: 12px;
+      background: #2a2a2a;
+      overflow: auto;
     }
 
     .line-numbers {
-      text-align: right;
       padding: 10px 5px;
-      color: #888;
-      user-select: none;
       background: #1a1a1a;
+      text-align: right;
+      user-select: none;
+      color: #888;
     }
 
-    .code-content {
+    .line-numbers div,
+    .code-lines div {
+      height: 1.5em;
+    }
+
+    .code-lines {
       padding: 10px;
-      overflow: auto;
       white-space: pre;
+      overflow: auto;
     }
 
     .buttons {
@@ -73,14 +78,16 @@
 </head>
 <body>
   <h2>Code Viewer</h2>
-  <div class="code-container" id="codeWrapper">
+  <div class="code-wrapper">
     <div class="line-numbers" id="lineNumbers"></div>
-    <pre class="code-content"><code id="codeBlock" contenteditable="true"></code></pre>
+    <pre class="code-lines" id="codeContainer"></pre>
   </div>
+
   <div class="buttons">
     <button onclick="copyCode()">Copy Code</button>
     <button onclick="downloadCode()">Download Code</button>
   </div>
+
   <div class="wrap-toggle">
     <label>
       <input type="checkbox" id="wrapToggle" onchange="toggleWrap()" />
@@ -91,28 +98,35 @@
   <script>
     const code = localStorage.getItem('code') || '';
     const lang = localStorage.getItem('lang') || 'text';
-    const codeBlock = document.getElementById('codeBlock');
+    const codeContainer = document.getElementById('codeContainer');
     const lineNumbers = document.getElementById('lineNumbers');
 
-    function updateLineNumbers() {
-      const lines = codeBlock.textContent.split('\n').length;
-      lineNumbers.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('\n');
-    }
+    function renderCodeWithLines(code, lang) {
+      const lines = code.split('\n');
+      lineNumbers.innerHTML = '';
+      codeContainer.innerHTML = '';
 
-    function loadCode() {
-      if (!code) {
-        codeBlock.textContent = '// No code found';
-      } else {
-        codeBlock.className = lang;
-        codeBlock.textContent = code;
-        hljs.highlightElement(codeBlock);
-      }
-      updateLineNumbers();
+      lines.forEach((line, i) => {
+        const lineNumber = document.createElement('div');
+        lineNumber.textContent = i + 1;
+        lineNumbers.appendChild(lineNumber);
+
+        const codeLine = document.createElement('div');
+        const codeElement = document.createElement('code');
+        codeElement.className = lang;
+        codeElement.textContent = line || ' ';
+        hljs.highlightElement(codeElement);
+        codeLine.appendChild(codeElement);
+        codeContainer.appendChild(codeLine);
+      });
     }
 
     function copyCode() {
+      const text = Array.from(codeContainer.querySelectorAll('code'))
+        .map(code => code.textContent)
+        .join('\n');
       const temp = document.createElement('textarea');
-      temp.value = codeBlock.textContent;
+      temp.value = text;
       document.body.appendChild(temp);
       temp.select();
       document.execCommand('copy');
@@ -133,7 +147,10 @@
         sql: 'sql'
       };
       const ext = extensions[lang] || 'txt';
-      const blob = new Blob([codeBlock.textContent], { type: 'text/plain' });
+      const text = Array.from(codeContainer.querySelectorAll('code'))
+        .map(code => code.textContent)
+        .join('\n');
+      const blob = new Blob([text], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -143,16 +160,10 @@
     }
 
     function toggleWrap() {
-      const wrap = document.getElementById('wrapToggle').checked;
-      codeBlock.parentElement.style.whiteSpace = wrap ? 'pre-wrap' : 'pre';
+      codeContainer.style.whiteSpace = document.getElementById('wrapToggle').checked ? 'pre-wrap' : 'pre';
     }
 
-    codeBlock.addEventListener('input', updateLineNumbers);
-    codeBlock.addEventListener('click', () => {
-      codeBlock.focus();
-    });
-
-    loadCode();
+    renderCodeWithLines(code, lang);
   </script>
 </body>
 </html>

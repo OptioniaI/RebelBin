@@ -9,10 +9,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css"/>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
       background-color: #1a1a1a;
@@ -22,16 +18,19 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      overflow: hidden;
     }
 
-    .wrapper {
+    .container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      width: 90%;
+      max-width: 800px;
     }
 
     .button-bar {
+      margin-bottom: 10px;
       display: flex;
       gap: 10px;
     }
@@ -50,75 +49,71 @@
       background-color: #336bd1;
     }
 
-    .code-wrapper {
+    .code-container {
       display: flex;
-      max-width: 50vw;
-      max-height: 50vh;
-      border: 2px solid #ffffff;
+      background-color: #2a2a2a;
       border-radius: 12px;
       overflow: auto;
-      background-color: #2a2a2a;
-    }
-
-    .code-scroll {
-      display: flex;
-      min-width: max-content;
+      border: 2px solid #fff;
+      width: 100%;
+      height: 60vh;
+      font-size: 0.85em;
     }
 
     .line-numbers {
+      padding: 10px;
       background-color: #1a1a1a;
-      padding: 10px 8px;
       color: #888;
       text-align: right;
       user-select: none;
       white-space: pre;
-      font-size: 0.9em;
+      line-height: 1.4;
     }
 
     pre {
       margin: 0;
       padding: 10px;
-      white-space: pre;
-      font-size: 0.9em;
       overflow: visible;
-      color: white;
+      white-space: pre;
+      line-height: 1.4;
+      background-color: #2a2a2a;
     }
 
-    code {
+    code.hljs {
       display: block;
+      overflow-x: auto;
+      padding: 0;
+      white-space: pre;
     }
 
-    .code-wrapper::-webkit-scrollbar {
+    .code-container::-webkit-scrollbar {
       width: 12px;
       height: 12px;
     }
 
-    .code-wrapper::-webkit-scrollbar-track {
+    .code-container::-webkit-scrollbar-track {
       background: #000;
     }
 
-    .code-wrapper::-webkit-scrollbar-thumb {
+    .code-container::-webkit-scrollbar-thumb {
       background-color: #555;
       border-radius: 6px;
     }
 
-    .code-wrapper::-webkit-scrollbar-thumb:hover {
+    .code-container::-webkit-scrollbar-thumb:hover {
       background-color: #777;
     }
   </style>
 </head>
 <body>
-  <div class="wrapper">
+  <div class="container">
     <div class="button-bar">
       <button onclick="copyCode()">Copy Code</button>
       <button onclick="downloadCode()">Download</button>
     </div>
-
-    <div class="code-wrapper">
-      <div class="code-scroll">
-        <div class="line-numbers" id="lineNumbers"></div>
-        <pre><code id="codeContent" class=""></code></pre>
-      </div>
+    <div class="code-container">
+      <div class="line-numbers" id="lineNumbers"></div>
+      <pre><code id="codeContent" class="hljs"></code></pre>
     </div>
   </div>
 
@@ -126,17 +121,13 @@
     const codeContent = document.getElementById("codeContent");
     const lineNumbers = document.getElementById("lineNumbers");
 
-    function updateLineNumbers(code) {
-      const lines = code.split("\n").length;
-      let nums = "";
-      for (let i = 1; i <= lines; i++) {
-        nums += i + "\n";
-      }
-      lineNumbers.textContent = nums;
+    function updateLineNumbers(text) {
+      const lines = text.split("\n").length;
+      lineNumbers.textContent = Array.from({ length: lines }, (_, i) => i + 1).join("\n");
     }
 
-    function loadCodeFromStorage() {
-      const code = localStorage.getItem("code") || "// No text provided";
+    function loadCode() {
+      const code = localStorage.getItem("code") || "// No code provided";
       const lang = new URLSearchParams(window.location.search).get("lang") || "text";
 
       codeContent.className = `hljs ${lang}`;
@@ -146,18 +137,17 @@
     }
 
     function copyCode() {
+      const selection = window.getSelection();
       const range = document.createRange();
       range.selectNodeContents(codeContent);
-      const sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(range);
+      selection.removeAllRanges();
+      selection.addRange(range);
       document.execCommand("copy");
     }
 
     function downloadCode() {
       const code = codeContent.textContent;
-      const lang = new URLSearchParams(window.location.search).get("lang") || "txt";
-
+      const lang = new URLSearchParams(window.location.search).get("lang") || "text";
       const extensions = {
         lua: 'lua',
         text: 'txt',
@@ -170,7 +160,6 @@
         css: 'css',
         sql: 'sql'
       };
-
       const ext = extensions[lang] || 'txt';
 
       const blob = new Blob([code], { type: 'text/plain' });
@@ -181,7 +170,7 @@
       URL.revokeObjectURL(a.href);
     }
 
-    loadCodeFromStorage();
+    loadCode();
   </script>
 </body>
 </html>

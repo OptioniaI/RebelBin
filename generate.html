@@ -16,7 +16,7 @@
       height: 100vh;
       margin: 0;
     }
-    textarea, select, button, input {
+    textarea, select, button {
       margin: 10px;
       border-radius: 8px;
     }
@@ -35,12 +35,16 @@
       border: none;
       cursor: pointer;
     }
-    input {
-      width: 600px;
-      padding: 10px;
-      background: #2a2a2a;
-      color: white;
-      border: 1px solid white;
+    #linkContainer {
+      margin-top: 10px;
+    }
+    #linkContainer a {
+      color: #5f6cfa;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    #linkContainer a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -60,7 +64,8 @@
   </select>
   <textarea id="inputText" placeholder="Enter your code..."></textarea>
   <button onclick="generate()">Generate Link</button>
-  <input type="text" id="outputUrl" readonly onclick="this.select()" />
+
+  <div id="linkContainer"></div>
 
   <script>
     function generate() {
@@ -68,7 +73,10 @@
       const lang = document.getElementById('languageSelect').value;
       localStorage.setItem('code', code);
       localStorage.setItem('lang', lang);
-      document.getElementById('outputUrl').value = window.location.origin + "/index.html";
+
+      const url = window.location.origin + "/index.html";
+      document.getElementById('linkContainer').innerHTML =
+        `<a href="${url}" target="_blank">${url}</a>`;
     }
   </script>
 </body>
